@@ -1,0 +1,159 @@
+import java.util.Scanner;
+
+public class Main {
+
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final char[][] board = new char[3][3];
+
+    private static void initializeBoard() {
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                board[row][col] = ' ';
+            }
+        }
+    }
+
+    private static void displayBoard() {
+        System.out.println("\n       TIC-TAC-TOE\n");
+
+        for (int row = 0; row < 3; row++) {
+            System.out.print("       ");
+
+            for (int col = 0; col < 3; col++) {
+                System.out.print(board[row][col] == ' '
+                        ? "   " : " " + board[row][col] + " ");
+
+                if (col < 2) {
+                    System.out.print("|");
+                }
+            }
+
+            System.out.println();
+
+            if (row < 2) {
+                System.out.println("      ---+---+---");
+            }
+        }
+
+        System.out.println();
+    }
+
+    private static boolean checkWinner(char player) {
+        // Check rows and columns.
+        for (int i = 0; i < 3; i++) {
+            if (board[i][0] == player
+                    && board[i][1] == player
+                    && board[i][2] == player) {
+                return true;
+            }
+
+            if (board[0][i] == player
+                    && board[1][i] == player
+                    && board[2][i] == player) {
+                return true;
+            }
+        }
+
+        // Check diagonals.
+        return (board[0][0] == player
+                    && board[1][1] == player
+                    && board[2][2] == player)
+                || (board[0][2] == player
+                    && board[1][1] == player
+                    && board[2][0] == player);
+    }
+
+    private static boolean isDraw() {
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                if (board[row][col] == ' ') {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private static int readPosition(String message) {
+        while (true) {
+            System.out.print(message);
+
+            if (scanner.hasNextInt()) {
+                int position = scanner.nextInt();
+
+                if (position >= 1 && position <= 3) {
+                    return position - 1;
+                }
+
+                System.out.println("Enter a number between 1 and 3.");
+            } else {
+                System.out.println("Invalid input. Enter a number.");
+                scanner.next();
+            }
+        }
+    }
+
+    private static void makeMove(char player) {
+        while (true) {
+            System.out.println("Player " + player + "'s turn.");
+
+            int row = readPosition("Enter row (1-3): ");
+            int col = readPosition("Enter column (1-3): ");
+
+            if (board[row][col] != ' ') {
+                System.out.println("Cell already occupied. Try again.\n");
+                continue;
+            }
+
+            board[row][col] = player;
+            return;
+        }
+    }
+
+    private static void playGame() {
+        initializeBoard();
+        char currentPlayer = 'X';
+
+        while (true) {
+            displayBoard();
+            makeMove(currentPlayer);
+
+            if (checkWinner(currentPlayer)) {
+                displayBoard();
+                System.out.println("Player " + currentPlayer + " wins!");
+                return;
+            }
+
+            if (isDraw()) {
+                displayBoard();
+                System.out.println("It's a draw!");
+                return;
+            }
+
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("================================");
+        System.out.println("       TIC-TAC-TOE GAME");
+        System.out.println("================================");
+        System.out.println("Player 1: X");
+        System.out.println("Player 2: O");
+
+        while (true) {
+            playGame();
+
+            System.out.print("\nPlay again? (yes/no): ");
+            String answer = scanner.next();
+
+            if (!answer.equalsIgnoreCase("yes")) {
+                break;
+            }
+        }
+
+        System.out.println("Thanks for playing!");
+        scanner.close();
+    }
+}
